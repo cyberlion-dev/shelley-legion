@@ -20,7 +20,7 @@ export default function Hero() {
           Youth Baseball • Honor, Pride, Victory
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up" style={{animationDelay: '0.4s'}}>
-          <a href="#prospect" className="btn-primary">
+          <a href="#contact" className="btn-primary">
             Join the Team
           </a>
           <a href="#schedule" className="btn-secondary">

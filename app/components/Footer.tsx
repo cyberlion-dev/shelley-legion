@@ -47,7 +47,7 @@ export default function Footer() {
               <a href="#team" className="block text-legion-gray-300 hover:text-white transition-colors">Team Roster</a>
               <a href="#schedule" className="block text-legion-gray-300 hover:text-white transition-colors">Game Schedule</a>
               <a href="#stats" className="block text-legion-gray-300 hover:text-white transition-colors">Season Stats</a>
-              <a href="#prospect" className="block text-legion-gray-300 hover:text-white transition-colors">Join the Team</a>
+              <a href="#contact" className="block text-legion-gray-300 hover:text-white transition-colors">Join the Team</a>
               <a href="/admin" className="block text-legion-gray-300 hover:text-white transition-colors">Admin</a>
             </div>
           </div>
