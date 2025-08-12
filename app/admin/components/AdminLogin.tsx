@@ -110,14 +110,6 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
               )}
             </button>
           </form>
-
-          <div className="mt-6 p-4 bg-legion-gray-50 dark:bg-legion-gray-700 rounded-lg">
-            <p className="text-sm text-legion-gray-600 dark:text-legion-gray-300 text-center">
-              <strong>Demo Credentials:</strong><br />
-              Username: <code>coach</code><br />
-              Password: <code>legion2025</code>
-            </p>
-          </div>
         </div>
       </div>
     </div>
