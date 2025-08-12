@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Send, User, Mail, Phone, Calendar, MapPin, FileText } from 'lucide-react'
 import emailjs from '@emailjs/browser'
 import BaseballBackground from './BaseballBackground'
@@ -20,6 +20,25 @@ export default function ProspectForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
 
+  // Simple math captcha
+  const [captcha, setCaptcha] = useState({ num1: 0, num2: 0, answer: '' })
+  const [captchaError, setCaptchaError] = useState('')
+
+  // Honeypot field (anti-bot)
+  const [honeypot, setHoneypot] = useState('')
+
+  // Generate new captcha
+  const generateCaptcha = () => {
+    const num1 = Math.floor(Math.random() * 10) + 1
+    const num2 = Math.floor(Math.random() * 10) + 1
+    setCaptcha({ num1, num2, answer: '' })
+    setCaptchaError('')
+  }
+
+  useEffect(() => {
+    generateCaptcha()
+  }, [])
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
@@ -31,12 +50,28 @@ export default function ProspectForm() {
     e.preventDefault()
     setIsSubmitting(true)
     setSubmitStatus('idle')
+    setCaptchaError('')
+
+    // Check honeypot field (anti-bot)
+    if (honeypot.trim() !== '') {
+      // Bot detected - silently fail
+      setIsSubmitting(false)
+      return
+    }
+
+    // Validate captcha
+    const correctAnswer = captcha.num1 + captcha.num2
+    if (parseInt(captcha.answer) !== correctAnswer) {
+      setCaptchaError('Please solve the math problem correctly')
+      setIsSubmitting(false)
+      generateCaptcha() // Generate new captcha
+      return
+    }
 
     try {
-      // Replace these with your EmailJS credentials
-      const serviceId = 'YOUR_SERVICE_ID'
-      const templateId = 'YOUR_TEMPLATE_ID'
-      const publicKey = 'YOUR_PUBLIC_KEY'
+      const serviceId = 'gmail2'
+      const templateId = 'template_8ayxsog'
+      const publicKey = 'user_o4tEBCpcTsbstAtv5jsln'
 
       const templateParams = {
         from_name: `${formData.firstName} ${formData.lastName}`,
@@ -64,6 +99,7 @@ export default function ProspectForm() {
         city: '',
         message: ''
       })
+      generateCaptcha() // Generate new captcha after successful submission
     } catch (error) {
       console.error('EmailJS error:', error)
       setSubmitStatus('error')
@@ -95,12 +131,25 @@ export default function ProspectForm() {
             <h2 className="text-4xl font-bold text-legion-gray-900 dark:text-white">Join the Legion</h2>
           </div>
           <p className="text-xl text-legion-gray-600 dark:text-legion-gray-300 max-w-2xl mx-auto">
-            Are you 18 or under and ready to play ball? Join the Shelley Legion youth baseball team! Fill out our prospect form and we'll be in touch.
+            Are you ready to play ball? Join the Shelley Legion youth baseball team! Fill out our prospect form and we'll be in touch.
           </p>
         </div>
 
         <div className="bg-white dark:bg-legion-gray-800 rounded-xl shadow-lg p-8 border-t-4 border-legion-red-600">
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Honeypot field - hidden from users, visible to bots */}
+            <div style={{ position: 'absolute', left: '-9999px', opacity: 0, pointerEvents: 'none' }} aria-hidden="true">
+              <label htmlFor="website">Website (leave blank)</label>
+              <input
+                type="text"
+                id="website"
+                name="website"
+                value={honeypot}
+                onChange={(e) => setHoneypot(e.target.value)}
+                tabIndex={-1}
+                autoComplete="off"
+              />
+            </div>
             {/* Name Fields */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
@@ -257,6 +306,39 @@ export default function ProspectForm() {
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-legion-red-500 focus:border-transparent transition-colors resize-none"
                 placeholder="Tell us about your baseball background, achievements, or anything else you'd like us to know..."
               />
+            </div>
+
+            {/* Captcha */}
+            <div>
+              <label className="block text-sm font-medium text-legion-gray-700 mb-2">
+                Security Check *
+              </label>
+              <div className="flex items-center space-x-4">
+                <div className="bg-legion-gray-100 dark:bg-legion-gray-700 px-4 py-3 rounded-lg border border-legion-gray-300 dark:border-legion-gray-600">
+                  <span className="text-lg font-mono font-bold text-legion-gray-900 dark:text-white">
+                    {captcha.num1} + {captcha.num2} = ?
+                  </span>
+                </div>
+                <input
+                  type="number"
+                  required
+                  value={captcha.answer}
+                  onChange={(e) => setCaptcha({ ...captcha, answer: e.target.value })}
+                  className="w-20 px-3 py-3 border border-legion-gray-300 dark:border-legion-gray-600 dark:bg-legion-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-legion-red-500 focus:border-transparent transition-colors text-center"
+                  placeholder="?"
+                />
+                <button
+                  type="button"
+                  onClick={generateCaptcha}
+                  className="px-3 py-2 text-sm text-legion-gray-600 dark:text-legion-gray-300 hover:text-legion-red-600 transition-colors"
+                  title="Generate new problem"
+                >
+                  🔄
+                </button>
+              </div>
+              {captchaError && (
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">{captchaError}</p>
+              )}
             </div>
 
             {/* Submit Button */}
