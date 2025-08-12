@@ -1,0 +1,49 @@
+{
+  "events": [
+    {
+      "date": "March 15",
+      "title": "vs Idaho Falls Eagles",
+      "type": "game",
+      "location": "Legion Field, Shelley",
+      "time": "7:00 PM",
+      "status": "completed",
+      "description": "Home game against Idaho Falls Eagles"
+    },
+    {
+      "date": "March 18",
+      "title": "Team Tryouts",
+      "type": "tryout",
+      "location": "Legion Field, Shelley",
+      "time": "6:00 PM",
+      "status": "completed",
+      "description": "Open tryouts for new players (ages 12-18)"
+    },
+    {
+      "date": "March 22",
+      "title": "@ Pocatello Pirates",
+      "type": "game",
+      "location": "Pocatello High School",
+      "time": "6:30 PM",
+      "status": "completed",
+      "description": "Away game at Pocatello"
+    },
+    {
+      "date": "March 25",
+      "title": "Practice Session",
+      "type": "practice",
+      "location": "Legion Field, Shelley",
+      "time": "5:00 PM",
+      "status": "completed",
+      "description": "Team practice - all players required"
+    },
+    {
+      "date": "March 29",
+      "title": "vs Blackfoot Broncos",
+      "type": "game",
+      "location": "Legion Field, Shelley",
+      "time": "7:00 PM",
+      "status": "completed",
+      "description": "Home game against Blackfoot Broncos"
+    }
+  ]
+}

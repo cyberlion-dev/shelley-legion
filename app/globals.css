@@ -1,0 +1,70 @@
+/* stylelint-disable at-rule-no-unknown */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* stylelint-enable at-rule-no-unknown */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-white hover:bg-legion-accent-100 text-legion-red-600 font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 hover:shadow-lg;
+  }
+
+  .btn-secondary {
+    @apply border-2 border-white text-white hover:bg-white hover:text-legion-red-600 font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105;
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 transform hover:scale-105 hover:shadow-xl;
+  }
+
+  .section-padding {
+    @apply py-16 md:py-24;
+  }
+
+  .form-input {
+    @apply w-full px-4 py-3 border border-legion-gray-300 dark:border-legion-gray-600 dark:bg-legion-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-legion-red-500 focus:border-transparent transition-colors;
+  }
+
+  .form-label {
+    @apply block text-sm font-medium text-legion-gray-700 dark:text-legion-gray-300 mb-2;
+  }
+}
+
+/* Custom scrollbar for baseball theme */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-legion-gray-100 dark:bg-legion-gray-800;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-legion-red-600 hover:bg-legion-red-700 rounded;
+}
+
+/* Baseball stitching effect */
+.baseball-stitching {
+  position: relative;
+}
+
+.baseball-stitching::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: repeating-linear-gradient(90deg,
+      #dc2626 0px,
+      #dc2626 10px,
+      transparent 10px,
+      transparent 15px);
+  transform: translateY(-50%);
+}
