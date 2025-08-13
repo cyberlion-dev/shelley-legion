@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { promises as fs } from 'fs'
-import path from 'path'
 import jwt from 'jsonwebtoken'
+import { put } from '@vercel/blob'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production'
-const SCHEDULE_FILE_PATH = path.join(process.cwd(), 'data', 'schedule.json')
 
 // Verify JWT token
 function verifyToken(request: NextRequest) {
@@ -26,16 +24,45 @@ function verifyToken(request: NextRequest) {
 // GET - Read schedule
 export async function GET() {
   try {
-    const fileContent = await fs.readFile(SCHEDULE_FILE_PATH, 'utf8')
-    const scheduleData = JSON.parse(fileContent)
+    // Try to fetch from Vercel Blob
+    const response = await fetch(`${process.env.BLOB_READ_WRITE_TOKEN ? 'https://blob.vercel-storage.com' : ''}/schedule.json`, {
+      headers: process.env.BLOB_READ_WRITE_TOKEN ? {
+        'Authorization': `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}`
+      } : {}
+    })
     
-    return NextResponse.json(scheduleData)
+    if (response.ok) {
+      const scheduleData = await response.json()
+      return NextResponse.json(scheduleData)
+    }
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to read schedule file' },
-      { status: 500 }
-    )
+    console.log('Blob storage not available, using fallback')
   }
+  
+  // Fallback to default data
+  const defaultSchedule = {
+    events: [
+      {
+        date: "January 15",
+        title: "vs Twin Falls Tigers",
+        type: "game",
+        location: "Legion Field, Shelley",
+        time: "7:00 PM",
+        status: "upcoming",
+        description: "Home game against Twin Falls Tigers"
+      },
+      {
+        date: "January 22",
+        title: "Winter Practice",
+        type: "practice",
+        location: "Indoor Facility, Shelley",
+        time: "6:00 PM",
+        status: "upcoming",
+        description: "Indoor winter practice session"
+      }
+    ]
+  }
+  return NextResponse.json(defaultSchedule)
 }
 
 // PUT - Update schedule
@@ -72,13 +99,24 @@ export async function PUT(request: NextRequest) {
 
     const scheduleData = { events }
     
-    // Write to file
-    await fs.writeFile(SCHEDULE_FILE_PATH, JSON.stringify(scheduleData, null, 2))
-    
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Schedule updated successfully' 
-    })
+    try {
+      // Save to Vercel Blob
+      await put('schedule.json', JSON.stringify(scheduleData), {
+        access: 'public',
+        contentType: 'application/json'
+      })
+      
+      return NextResponse.json({ 
+        success: true, 
+        message: 'Schedule updated successfully' 
+      })
+    } catch (error) {
+      console.error('Blob storage error:', error)
+      return NextResponse.json(
+        { error: 'Failed to save schedule data' },
+        { status: 500 }
+      )
+    }
   } catch (error) {
     return NextResponse.json(
       { error: 'Failed to update schedule' },
