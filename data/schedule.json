@@ -19,31 +19,40 @@
       "description": "Open tryouts for new players (ages 12-18)"
     },
     {
-      "date": "March 22",
-      "title": "@ Pocatello Pirates",
-      "type": "game",
-      "location": "Pocatello High School",
-      "time": "6:30 PM",
-      "status": "completed",
-      "description": "Away game at Pocatello"
-    },
-    {
-      "date": "March 25",
-      "title": "Practice Session",
-      "type": "practice",
-      "location": "Legion Field, Shelley",
-      "time": "5:00 PM",
-      "status": "completed",
-      "description": "Team practice - all players required"
-    },
-    {
-      "date": "March 29",
-      "title": "vs Blackfoot Broncos",
+      "date": "January 15",
+      "title": "vs Twin Falls Tigers",
       "type": "game",
       "location": "Legion Field, Shelley",
       "time": "7:00 PM",
-      "status": "completed",
-      "description": "Home game against Blackfoot Broncos"
+      "status": "upcoming",
+      "description": "Home game against Twin Falls Tigers"
+    },
+    {
+      "date": "January 22",
+      "title": "Winter Practice",
+      "type": "practice",
+      "location": "Indoor Facility, Shelley",
+      "time": "6:00 PM",
+      "status": "upcoming",
+      "description": "Indoor winter practice session"
+    },
+    {
+      "date": "February 5",
+      "title": "@ Rexburg Rangers",
+      "type": "game",
+      "location": "Rexburg High School",
+      "time": "6:30 PM",
+      "status": "upcoming",
+      "description": "Away game at Rexburg"
+    },
+    {
+      "date": "February 12",
+      "title": "Spring Tryouts",
+      "type": "tryout",
+      "location": "Legion Field, Shelley",
+      "time": "5:00 PM",
+      "status": "upcoming",
+      "description": "Spring season tryouts for new players (ages 12-18)"
     }
   ]
 }

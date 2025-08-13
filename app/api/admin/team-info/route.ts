@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { promises as fs } from 'fs'
-import path from 'path'
 import jwt from 'jsonwebtoken'
+import { put } from '@vercel/blob'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production'
-const TEAM_INFO_FILE_PATH = path.join(process.cwd(), 'data', 'team-info.json')
 
 // Verify JWT token
 function verifyToken(request: NextRequest) {
@@ -26,16 +24,38 @@ function verifyToken(request: NextRequest) {
 // GET - Read team info
 export async function GET() {
   try {
-    const fileContent = await fs.readFile(TEAM_INFO_FILE_PATH, 'utf8')
-    const teamInfoData = JSON.parse(fileContent)
+    // Try to fetch from Vercel Blob
+    const response = await fetch(`${process.env.BLOB_READ_WRITE_TOKEN ? 'https://blob.vercel-storage.com' : ''}/team-info.json`, {
+      headers: process.env.BLOB_READ_WRITE_TOKEN ? {
+        'Authorization': `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}`
+      } : {}
+    })
     
-    return NextResponse.json(teamInfoData)
+    if (response.ok) {
+      const teamInfoData = await response.json()
+      return NextResponse.json(teamInfoData)
+    }
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to read team info file' },
-      { status: 500 }
-    )
+    console.log('Blob storage not available, using fallback')
   }
+  
+  // Fallback to default data
+  const defaultTeamInfo = {
+    teamName: "Shelley Legion",
+    tagline: "Honor, Pride, Victory",
+    description: "Shelley's premier youth baseball team for players 18 and under, representing our community with honor and developing the next generation of baseball talent in Eastern Idaho.",
+    contact: {
+      phone: "(208) 555-LEGION",
+      email: "info@shelleylegion.com",
+      address: "Legion Field, Shelley, ID"
+    },
+    socialMedia: {
+      facebook: "https://facebook.com/shelleylegion",
+      twitter: "https://twitter.com/shelleylegion",
+      instagram: "https://instagram.com/shelleylegion"
+    }
+  }
+  return NextResponse.json(defaultTeamInfo)
 }
 
 // PUT - Update team info
@@ -74,13 +94,24 @@ export async function PUT(request: NextRequest) {
       )
     }
     
-    // Write to file
-    await fs.writeFile(TEAM_INFO_FILE_PATH, JSON.stringify(teamInfoData, null, 2))
-    
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Team info updated successfully' 
-    })
+    try {
+      // Save to Vercel Blob
+      await put('team-info.json', JSON.stringify(teamInfoData), {
+        access: 'public',
+        contentType: 'application/json'
+      })
+      
+      return NextResponse.json({ 
+        success: true, 
+        message: 'Team info updated successfully' 
+      })
+    } catch (error) {
+      console.error('Blob storage error:', error)
+      return NextResponse.json(
+        { error: 'Failed to save team info data' },
+        { status: 500 }
+      )
+    }
   } catch (error) {
     return NextResponse.json(
       { error: 'Failed to update team info' },

@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { promises as fs } from 'fs'
-import path from 'path'
 import jwt from 'jsonwebtoken'
+import { put } from '@vercel/blob'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production'
-const STATS_FILE_PATH = path.join(process.cwd(), 'data', 'stats.json')
 
 // Verify JWT token
 function verifyToken(request: NextRequest) {
@@ -26,16 +24,51 @@ function verifyToken(request: NextRequest) {
 // GET - Read stats
 export async function GET() {
   try {
-    const fileContent = await fs.readFile(STATS_FILE_PATH, 'utf8')
-    const statsData = JSON.parse(fileContent)
+    // Try to fetch from Vercel Blob
+    const response = await fetch(`${process.env.BLOB_READ_WRITE_TOKEN ? 'https://blob.vercel-storage.com' : ''}/stats.json`, {
+      headers: process.env.BLOB_READ_WRITE_TOKEN ? {
+        'Authorization': `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}`
+      } : {}
+    })
     
-    return NextResponse.json(statsData)
+    if (response.ok) {
+      const statsData = await response.json()
+      return NextResponse.json(statsData)
+    }
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to read stats file' },
-      { status: 500 }
-    )
+    console.log('Blob storage not available, using fallback')
   }
+  
+  // Fallback to default data
+  const defaultStats = {
+    teamStats: [
+      {
+        label: "Wins This Season",
+        value: "18",
+        description: "Out of 25 games",
+        icon: "trophy"
+      },
+      {
+        label: "Team Batting Average",
+        value: ".289",
+        description: "League leading",
+        icon: "target"
+      },
+      {
+        label: "Home Runs",
+        value: "47",
+        description: "Team total",
+        icon: "trending-up"
+      },
+      {
+        label: "League Ranking",
+        value: "#2",
+        description: "In division",
+        icon: "award"
+      }
+    ]
+  }
+  return NextResponse.json(defaultStats)
 }
 
 // PUT - Update stats
@@ -72,13 +105,24 @@ export async function PUT(request: NextRequest) {
 
     const statsData = { teamStats }
     
-    // Write to file
-    await fs.writeFile(STATS_FILE_PATH, JSON.stringify(statsData, null, 2))
-    
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Stats updated successfully' 
-    })
+    try {
+      // Save to Vercel Blob
+      await put('stats.json', JSON.stringify(statsData), {
+        access: 'public',
+        contentType: 'application/json'
+      })
+      
+      return NextResponse.json({ 
+        success: true, 
+        message: 'Stats updated successfully' 
+      })
+    } catch (error) {
+      console.error('Blob storage error:', error)
+      return NextResponse.json(
+        { error: 'Failed to save stats data' },
+        { status: 500 }
+      )
+    }
   } catch (error) {
     return NextResponse.json(
       { error: 'Failed to update stats' },

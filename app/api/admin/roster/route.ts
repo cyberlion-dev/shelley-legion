@@ -1,21 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { promises as fs } from 'fs'
-import path from 'path'
 import jwt from 'jsonwebtoken'
+import { put, list } from '@vercel/blob'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production'
-const ROSTER_FILE_PATH = path.join(process.cwd(), 'data', 'roster.json')
 
 // Verify JWT token
 function verifyToken(request: NextRequest) {
   const authHeader = request.headers.get('authorization')
-  
+
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return null
   }
 
   const token = authHeader.substring(7)
-  
+
   try {
     return jwt.verify(token, JWT_SECRET)
   } catch (error) {
@@ -26,16 +24,32 @@ function verifyToken(request: NextRequest) {
 // GET - Read roster
 export async function GET() {
   try {
-    const fileContent = await fs.readFile(ROSTER_FILE_PATH, 'utf8')
-    const rosterData = JSON.parse(fileContent)
-    
-    return NextResponse.json(rosterData)
+    // Try to fetch from Vercel Blob
+    const blobs = await list({ prefix: 'roster.json' })
+
+    if (blobs.blobs.length > 0) {
+      const response = await fetch(blobs.blobs[0].url)
+      if (response.ok) {
+        const rosterData = await response.json()
+        return NextResponse.json(rosterData)
+      }
+    }
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to read roster file' },
-      { status: 500 }
-    )
+    console.log('Blob storage not available, using fallback:', error)
   }
+
+  // Fallback to default data
+  const defaultRoster = {
+    players: [
+      { number: 23, name: 'Jake Morrison', position: 'Pitcher', stats: '2.45 ERA' },
+      { number: 15, name: 'Mike Rodriguez', position: 'Catcher', stats: '.285 AVG' },
+      { number: 7, name: 'Sam Johnson', position: 'Shortstop', stats: '.312 AVG' },
+      { number: 42, name: 'Tyler Davis', position: 'First Base', stats: '18 HRs' },
+      { number: 9, name: 'Alex Chen', position: 'Center Field', stats: '25 SBs' },
+      { number: 31, name: 'Ryan Miller', position: 'Third Base', stats: '.298 AVG' }
+    ]
+  }
+  return NextResponse.json(defaultRoster)
 }
 
 // PUT - Update roster
@@ -51,7 +65,7 @@ export async function PUT(request: NextRequest) {
 
   try {
     const { players } = await request.json()
-    
+
     // Validate data structure
     if (!Array.isArray(players)) {
       return NextResponse.json(
@@ -71,14 +85,25 @@ export async function PUT(request: NextRequest) {
     }
 
     const rosterData = { players }
-    
-    // Write to file
-    await fs.writeFile(ROSTER_FILE_PATH, JSON.stringify(rosterData, null, 2))
-    
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Roster updated successfully' 
-    })
+
+    try {
+      // Save to Vercel Blob
+      await put('roster.json', JSON.stringify(rosterData), {
+        access: 'public',
+        contentType: 'application/json'
+      })
+
+      return NextResponse.json({
+        success: true,
+        message: 'Roster updated successfully'
+      })
+    } catch (error) {
+      console.error('Blob storage error:', error)
+      return NextResponse.json(
+        { error: 'Failed to save roster data' },
+        { status: 500 }
+      )
+    }
   } catch (error) {
     return NextResponse.json(
       { error: 'Failed to update roster' },
