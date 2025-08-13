@@ -2,9 +2,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import jwt from 'jsonwebtoken'
 import { put } from '@vercel/blob'
 
-const JWT_SECRET = process.env.JWT_SECRET || (() => {
-  throw new Error('JWT_SECRET environment variable is required')
-})()
+function getJWTSecret() {
+  const secret = process.env.JWT_SECRET
+  if (!secret) {
+    throw new Error('JWT_SECRET environment variable is required')
+  }
+  return secret
+}
 
 // Verify JWT token
 function verifyToken(request: NextRequest) {
@@ -17,7 +21,7 @@ function verifyToken(request: NextRequest) {
   const token = authHeader.substring(7)
   
   try {
-    return jwt.verify(token, JWT_SECRET)
+    return jwt.verify(token, getJWTSecret())
   } catch (error) {
     return null
   }
