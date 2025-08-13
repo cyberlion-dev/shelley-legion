@@ -4,7 +4,13 @@ import jwt from 'jsonwebtoken'
 // In production, use environment variables
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'coach'
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'legion2025'
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production'
+function getJWTSecret() {
+  const secret = process.env.JWT_SECRET
+  if (!secret) {
+    throw new Error('JWT_SECRET environment variable is required')
+  }
+  return secret
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,7 +21,7 @@ export async function POST(request: NextRequest) {
       // Create JWT token
       const token = jwt.sign(
         { username, role: 'admin' },
-        JWT_SECRET,
+        getJWTSecret(),
         { expiresIn: '24h' }
       )
 
