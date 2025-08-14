@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import jwt from 'jsonwebtoken'
 import { put } from '@vercel/blob'
+import { list } from '@vercel/blob'
 
 function getJWTSecret() {
   const secret = process.env.JWT_SECRET
@@ -72,7 +73,12 @@ export async function GET() {
       }
     ]
   }
-  return NextResponse.json(defaultSchedule)
+  const result = NextResponse.json(defaultSchedule)
+  // Prevent caching
+  result.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate')
+  result.headers.set('Pragma', 'no-cache')
+  result.headers.set('Expires', '0')
+  return result
 }
 
 // PUT - Update schedule

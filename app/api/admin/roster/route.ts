@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import jwt from 'jsonwebtoken'
-import { put, list } from '@vercel/blob'
+import { put } from '@vercel/blob'
+import { list } from '@vercel/blob'
 
 function getJWTSecret() {
   const secret = process.env.JWT_SECRET

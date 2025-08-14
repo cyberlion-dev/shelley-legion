@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import jwt from 'jsonwebtoken'
 import { put } from '@vercel/blob'
+import { list } from '@vercel/blob'
 
 function getJWTSecret() {
   const secret = process.env.JWT_SECRET
@@ -31,18 +32,22 @@ function verifyToken(request: NextRequest) {
 export async function GET() {
   try {
     // Try to fetch from Vercel Blob
-    const response = await fetch(`${process.env.BLOB_READ_WRITE_TOKEN ? 'https://blob.vercel-storage.com' : ''}/team-info.json`, {
-      headers: process.env.BLOB_READ_WRITE_TOKEN ? {
-        'Authorization': `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}`
-      } : {}
-    })
-    
-    if (response.ok) {
-      const teamInfoData = await response.json()
-      return NextResponse.json(teamInfoData)
+    const blobs = await list({ prefix: 'team-info.json' })
+
+    if (blobs.blobs.length > 0) {
+      const response = await fetch(blobs.blobs[0].url)
+      if (response.ok) {
+        const teamInfoData = await response.json()
+        const result = NextResponse.json(teamInfoData)
+        // Prevent caching
+        result.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate')
+        result.headers.set('Pragma', 'no-cache')
+        result.headers.set('Expires', '0')
+        return result
+      }
     }
   } catch (error) {
-    console.log('Blob storage not available, using fallback')
+    console.log('Blob storage not available, using fallback:', error)
   }
   
   // Fallback to default data
@@ -61,7 +66,12 @@ export async function GET() {
       instagram: "https://instagram.com/shelleylegion"
     }
   }
-  return NextResponse.json(defaultTeamInfo)
+  const result = NextResponse.json(defaultTeamInfo)
+  // Prevent caching
+  result.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate')
+  result.headers.set('Pragma', 'no-cache')
+  result.headers.set('Expires', '0')
+  return result
 }
 
 // PUT - Update team info
