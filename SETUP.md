@@ -1,80 +1,106 @@
 # Shelley Legion Website Setup Guide
 
-## 🚀 Quick Setup for Vercel Deployment
+## 🚀 Simple Setup - No Admin Panel
 
-### 1. Environment Variables Setup
+This website now uses simple JSON files for data management. No complex admin system, no database, no authentication - just edit the files directly in your code!
 
-Create a `.env.local` file in your project root with these variables:
+### 1. Environment Variables (Optional)
+
+Only needed if you want the contact form to work:
+
+Create a `.env.local` file in your project root:
 
 ```bash
-# Vercel Blob Storage (get this from your Vercel dashboard)
-BLOB_READ_WRITE_TOKEN=vercel_blob_rw_XXXXXXXXXX
-
-# Admin Authentication
-JWT_SECRET=your-very-secure-secret-key-here-make-it-long-and-random
-ADMIN_USERNAME=coach
-ADMIN_PASSWORD=legion2025
-
 # EmailJS Configuration (optional - for contact form)
 EMAILJS_SERVICE_ID=your_service_id
 EMAILJS_TEMPLATE_ID=your_template_id
 EMAILJS_PUBLIC_KEY=your_public_key
 ```
 
-### 2. Get Your Blob Token
-
-1. Go to your Vercel dashboard
-2. Select your project
-3. Go to "Storage" tab
-4. You should see your "shelley-legion-blob" storage
-5. Click on it to get your connection details
-6. Copy the `BLOB_READ_WRITE_TOKEN` value
-
-### 3. Add Environment Variables to Vercel
-
-1. In your Vercel dashboard, go to your project
-2. Go to "Settings" → "Environment Variables"
-3. Add each variable from your `.env.local` file:
-   - `BLOB_READ_WRITE_TOKEN` = your blob token
-   - `JWT_SECRET` = a long, secure random string
-   - `ADMIN_USERNAME` = coach (or whatever you prefer)
-   - `ADMIN_PASSWORD` = legion2025 (or whatever you prefer)
-
-### 4. Deploy
+### 2. Deploy
 
 1. Push your code to GitHub
 2. Vercel will automatically deploy
-3. Your admin panel should work at: `https://your-site.vercel.app/admin`
+3. Your site will be live at: `https://your-site.vercel.app`
 
-## 🔧 Testing the Admin Panel
+## 📝 Editing Team Data
 
-1. Go to `/admin` on your deployed site
-2. Login with your username/password
-3. Try updating the roster, schedule, or team info
-4. Changes should persist after refresh
+All team data is stored in simple JSON files in the `/data` folder:
 
-## 🎯 Default Login Credentials
+### **Team Roster** (`data/roster.json`)
+```json
+{
+  "players": [
+    {
+      "number": 44,
+      "name": "Jake Morrison", 
+      "position": "Pitcher",
+      "stats": "2.45 ERA"
+    }
+  ]
+}
+```
 
-- **Username**: `coach`
-- **Password**: `legion2025`
+### **Schedule** (`data/schedule.json`)
+```json
+{
+  "events": [
+    {
+      "date": "March 15",
+      "title": "vs Twin Falls Tigers",
+      "type": "game",
+      "location": "Legion Field, Shelley",
+      "time": "7:00 PM",
+      "status": "upcoming",
+      "description": "Home opener"
+    }
+  ]
+}
+```
 
-(Change these in your environment variables for security)
+### **Team Stats** (`data/stats.json`)
+```json
+{
+  "teamStats": [
+    {
+      "label": "Games Won",
+      "value": "18",
+      "description": "This season",
+      "icon": "trophy"
+    }
+  ]
+}
+```
 
-## 📝 Notes
+### **Team Info** (`data/team-info.json`)
+```json
+{
+  "teamName": "Shelley Legion",
+  "tagline": "Honor, Pride, Victory",
+  "description": "Team description...",
+  "contact": {
+    "phone": "(208) 555-LEGION",
+    "email": "info@shelleylegion.com",
+    "address": "Legion Field, Shelley, ID"
+  }
+}
+```
 
-- The Blob storage will automatically create JSON files when you first save data
-- If Blob storage isn't configured, the site will show default data
-- All data is stored in Vercel Blob, not in your code repository
-- The admin panel is protected by JWT authentication
+## ✏️ How to Update Data
 
-## 🆘 Troubleshooting
+1. **Edit the JSON files** in the `/data` folder
+2. **Commit and push** your changes to GitHub
+3. **Vercel automatically deploys** the updates
+4. **Changes appear immediately** on your live site
 
-**Admin panel shows "Failed to update":**
-- Check that `BLOB_READ_WRITE_TOKEN` is set correctly in Vercel environment variables
-- Make sure the Blob storage is connected to your project
+## 🎯 Benefits of This Approach
 
-**Can't login to admin:**
-- Check that `JWT_SECRET`, `ADMIN_USERNAME`, and `ADMIN_PASSWORD` are set in Vercel environment variables
+- ✅ **Simple**: Just edit JSON files
+- ✅ **Reliable**: No complex admin system to break
+- ✅ **Fast**: No database queries or API calls
+- ✅ **Version controlled**: All changes tracked in Git
+- ✅ **No authentication needed**: Edit directly in code
 
-**Site shows default data:**
-- This is normal on first deployment - use the admin panel to add your real data
+## 📱 Contact Form
+
+The contact form will work if you set up EmailJS (optional). If not configured, the form will still display but won't send emails.

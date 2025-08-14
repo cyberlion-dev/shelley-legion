@@ -20,20 +20,19 @@ export default function ScheduleSection() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const fetchSchedule = async () => {
+    const loadSchedule = async () => {
       try {
-        const response = await fetch('/api/admin/schedule')
-        const data = await response.json()
-        setEvents(data.events || [])
+        const scheduleData = await import('../../data/schedule.json')
+        setEvents((scheduleData.events || []) as Event[])
       } catch (error) {
-        console.error('Failed to fetch schedule:', error)
+        console.error('Failed to load schedule:', error)
         setEvents([])
       } finally {
         setIsLoading(false)
       }
     }
 
-    fetchSchedule()
+    loadSchedule()
   }, [])
 
   const getEventIcon = (type: string) => {
