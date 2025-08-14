@@ -1,9 +1,55 @@
 'use client'
 
 import { Mail, Phone, MapPin, Facebook, Twitter, Instagram } from 'lucide-react'
-import teamInfo from '../../data/team-info.json'
+import { useState, useEffect } from 'react'
+
+interface TeamInfo {
+  teamName: string
+  tagline: string
+  description: string
+  contact: {
+    phone: string
+    email: string
+    address: string
+  }
+  socialMedia: {
+    facebook: string
+    twitter: string
+    instagram: string
+  }
+}
 
 export default function Footer() {
+  const [teamInfo, setTeamInfo] = useState<TeamInfo>({
+    teamName: 'Shelley Legion',
+    tagline: 'Honor, Pride, Victory',
+    description: 'Youth baseball team for players 18 and under',
+    contact: {
+      phone: '(208) 555-LEGION',
+      email: 'info@shelleylegion.com',
+      address: 'Legion Field, Shelley, ID'
+    },
+    socialMedia: {
+      facebook: 'https://facebook.com/shelleylegion',
+      twitter: 'https://twitter.com/shelleylegion',
+      instagram: 'https://instagram.com/shelleylegion'
+    }
+  })
+
+  useEffect(() => {
+    const fetchTeamInfo = async () => {
+      try {
+        const response = await fetch('/api/admin/team-info')
+        const data = await response.json()
+        setTeamInfo(data)
+      } catch (error) {
+        console.error('Failed to fetch team info:', error)
+        // Keep the default data that was already set
+      }
+    }
+
+    fetchTeamInfo()
+  }, [])
   return (
     <footer className="bg-legion-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

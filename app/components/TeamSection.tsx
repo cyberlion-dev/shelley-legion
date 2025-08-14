@@ -1,11 +1,37 @@
 'use client'
 
 import { Users } from 'lucide-react'
-import rosterData from '../../data/roster.json'
+import { useState, useEffect } from 'react'
 import BaseballBackground from './BaseballBackground'
 
+interface Player {
+  number: number
+  name: string
+  position: string
+  stats: string
+}
+
 export default function TeamSection() {
-  const { players } = rosterData
+  const [players, setPlayers] = useState<Player[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchRoster = async () => {
+      try {
+        const response = await fetch('/api/admin/roster')
+        const data = await response.json()
+        setPlayers(data.players || [])
+      } catch (error) {
+        console.error('Failed to fetch roster:', error)
+        // Fallback to empty array
+        setPlayers([])
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchRoster()
+  }, [])
   return (
     <section id="team" className="section-padding bg-legion-gray-50 dark:bg-legion-gray-900 relative overflow-hidden">
       <BaseballBackground />
@@ -20,8 +46,14 @@ export default function TeamSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {players.map((player, index) => (
+        {isLoading ? (
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-legion-red-600 mx-auto"></div>
+            <p className="mt-4 text-legion-gray-600 dark:text-legion-gray-300">Loading team roster...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {players.map((player, index) => (
             <div
               key={player.number}
               className="bg-white dark:bg-legion-gray-800 rounded-xl shadow-lg p-6 card-hover border-l-4 border-legion-red-600"
@@ -36,8 +68,9 @@ export default function TeamSection() {
                 <p className="text-legion-gray-600 dark:text-legion-gray-300">{player.stats}</p>
               </div>
             </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   )
