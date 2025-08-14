@@ -20,7 +20,21 @@ interface TeamInfo {
 }
 
 export default function Footer() {
-  const [teamInfo, setTeamInfo] = useState<TeamInfo | null>(null)
+  const [teamInfo, setTeamInfo] = useState<TeamInfo>({
+    teamName: 'Shelley Legion',
+    tagline: 'Honor, Pride, Victory',
+    description: 'Youth baseball team for players 18 and under',
+    contact: {
+      phone: '(208) 555-LEGION',
+      email: 'info@shelleylegion.com',
+      address: 'Legion Field, Shelley, ID'
+    },
+    socialMedia: {
+      facebook: 'https://facebook.com/shelleylegion',
+      twitter: 'https://twitter.com/shelleylegion',
+      instagram: 'https://instagram.com/shelleylegion'
+    }
+  })
 
   useEffect(() => {
     const fetchTeamInfo = async () => {
@@ -30,22 +44,7 @@ export default function Footer() {
         setTeamInfo(data)
       } catch (error) {
         console.error('Failed to fetch team info:', error)
-        // Fallback data
-        setTeamInfo({
-          teamName: 'Shelley Legion',
-          tagline: 'Honor, Pride, Victory',
-          description: 'Youth baseball team for players 18 and under',
-          contact: {
-            phone: '(208) 555-LEGION',
-            email: 'info@shelleylegion.com',
-            address: 'Legion Field, Shelley, ID'
-          },
-          socialMedia: {
-            facebook: 'https://facebook.com/shelleylegion',
-            twitter: 'https://twitter.com/shelleylegion',
-            instagram: 'https://instagram.com/shelleylegion'
-          }
-        })
+        // Keep the default data that was already set
       }
     }
 
