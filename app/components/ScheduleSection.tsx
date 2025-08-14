@@ -1,13 +1,40 @@
 'use client'
 
 import { Calendar, MapPin, Clock, Plus } from 'lucide-react'
-import scheduleData from '../../data/schedule.json'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import BaseballBackground from './BaseballBackground'
 import { getEventStatus, formatEventStatus } from '../utils/dateUtils'
 
+interface Event {
+  date: string
+  title: string
+  type: 'game' | 'tryout' | 'practice' | 'other'
+  location: string
+  time: string
+  status: string
+  description: string
+}
+
 export default function ScheduleSection() {
-  const { events } = scheduleData
+  const [events, setEvents] = useState<Event[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchSchedule = async () => {
+      try {
+        const response = await fetch('/api/admin/schedule')
+        const data = await response.json()
+        setEvents(data.events || [])
+      } catch (error) {
+        console.error('Failed to fetch schedule:', error)
+        setEvents([])
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchSchedule()
+  }, [])
 
   const getEventIcon = (type: string) => {
     switch (type) {
@@ -62,8 +89,14 @@ export default function ScheduleSection() {
           </p>
         </div>
 
-        <div className="max-w-4xl mx-auto space-y-4">
-          {events.map((event, index) => {
+        {isLoading ? (
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-legion-red-600 mx-auto"></div>
+            <p className="mt-4 text-legion-gray-600 dark:text-legion-gray-300">Loading events...</p>
+          </div>
+        ) : (
+          <div className="max-w-4xl mx-auto space-y-4">
+            {events.map((event, index) => {
             const currentStatus = getEventStatus(event.date, event.status)
             const statusDisplay = formatEventStatus(currentStatus)
             
@@ -115,9 +148,10 @@ export default function ScheduleSection() {
                   </div>
                 </div>
               </div>
-            )
-          })}
-        </div>
+              )
+            })}
+          </div>
+        )}
       </div>
     </section>
   )

@@ -153,7 +153,7 @@ export default function ProspectForm() {
             {/* Name Fields */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="firstName" className="form-label">
+                <label htmlFor="firstName" className="block text-sm font-medium text-legion-gray-700 dark:text-legion-gray-300 mb-2">
                   First Name *
                 </label>
                 <input
@@ -163,7 +163,7 @@ export default function ProspectForm() {
                   required
                   value={formData.firstName}
                   onChange={handleChange}
-                  className="form-input"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-legion-gray-600 dark:bg-legion-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-legion-red-500 focus:border-transparent transition-colors"
                   placeholder="Enter your first name"
                 />
               </div>

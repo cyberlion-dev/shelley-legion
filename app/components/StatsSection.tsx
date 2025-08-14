@@ -1,7 +1,7 @@
 'use client'
 
 import { Trophy, Target, TrendingUp, Award } from 'lucide-react'
-import statsData from '../../data/stats.json'
+import { useState, useEffect } from 'react'
 
 const iconMap = {
   trophy: Trophy,
@@ -10,8 +10,33 @@ const iconMap = {
   award: Award
 }
 
+interface TeamStat {
+  label: string
+  value: string
+  description: string
+  icon: string
+}
+
 export default function StatsSection() {
-  const { teamStats } = statsData
+  const [teamStats, setTeamStats] = useState<TeamStat[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch('/api/admin/stats')
+        const data = await response.json()
+        setTeamStats(data.teamStats || [])
+      } catch (error) {
+        console.error('Failed to fetch stats:', error)
+        setTeamStats([])
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchStats()
+  }, [])
   return (
     <section id="stats" className="section-padding bg-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -22,8 +47,14 @@ export default function StatsSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {teamStats.map((stat, index) => {
+        {isLoading ? (
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-legion-red-600 mx-auto"></div>
+            <p className="mt-4 text-gray-300">Loading team stats...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {teamStats.map((stat, index) => {
             const IconComponent = iconMap[stat.icon as keyof typeof iconMap]
             return (
               <div
@@ -38,8 +69,9 @@ export default function StatsSection() {
                 <div className="text-legion-gray-300 text-sm">{stat.description}</div>
               </div>
             )
-          })}
-        </div>
+            })}
+          </div>
+        )}
       </div>
     </section>
   )
