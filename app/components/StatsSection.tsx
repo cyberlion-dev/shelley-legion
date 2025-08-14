@@ -22,25 +22,19 @@ export default function StatsSection() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const fetchStats = async () => {
+    const loadStats = async () => {
       try {
-        const response = await fetch('/api/admin/stats', {
-          cache: 'no-store',
-          headers: {
-            'Cache-Control': 'no-cache'
-          }
-        })
-        const data = await response.json()
-        setTeamStats(data.teamStats || [])
+        const statsData = await import('../../data/stats.json')
+        setTeamStats((statsData.teamStats || []) as TeamStat[])
       } catch (error) {
-        console.error('Failed to fetch stats:', error)
+        console.error('Failed to load stats:', error)
         setTeamStats([])
       } finally {
         setIsLoading(false)
       }
     }
 
-    fetchStats()
+    loadStats()
   }, [])
   return (
     <section id="stats" className="section-padding bg-black">

@@ -1,9 +1,9 @@
 {
   "teamStats": [
     {
-      "label": "Wins This Season",
+      "label": "Games Won",
       "value": "18",
-      "description": "Out of 25 games",
+      "description": "This season",
       "icon": "trophy"
     },
     {

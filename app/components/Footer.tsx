@@ -37,23 +37,17 @@ export default function Footer() {
   })
 
   useEffect(() => {
-    const fetchTeamInfo = async () => {
+    const loadTeamInfo = async () => {
       try {
-        const response = await fetch('/api/admin/team-info', {
-          cache: 'no-store',
-          headers: {
-            'Cache-Control': 'no-cache'
-          }
-        })
-        const data = await response.json()
-        setTeamInfo(data)
+        const teamInfoData = await import('../../data/team-info.json')
+        setTeamInfo((teamInfoData.default || teamInfoData) as TeamInfo)
       } catch (error) {
-        console.error('Failed to fetch team info:', error)
+        console.error('Failed to load team info:', error)
         // Keep the default data that was already set
       }
     }
 
-    fetchTeamInfo()
+    loadTeamInfo()
   }, [])
   return (
     <footer className="bg-legion-gray-900 text-white">
@@ -99,7 +93,6 @@ export default function Footer() {
               <a href="#schedule" className="block text-legion-gray-300 hover:text-white transition-colors">Game Schedule</a>
               <a href="#stats" className="block text-legion-gray-300 hover:text-white transition-colors">Season Stats</a>
               <a href="#contact" className="block text-legion-gray-300 hover:text-white transition-colors">Join the Team</a>
-              <a href="/admin" className="block text-legion-gray-300 hover:text-white transition-colors">Admin</a>
             </div>
           </div>
         </div>

@@ -2,57 +2,39 @@
   "events": [
     {
       "date": "March 15",
-      "title": "vs Idaho Falls Eagles",
-      "type": "game",
-      "location": "Legion Field, Shelley",
-      "time": "7:00 PM",
-      "status": "completed",
-      "description": "Home game against Idaho Falls Eagles"
-    },
-    {
-      "date": "March 18",
-      "title": "Team Tryouts",
-      "type": "tryout",
-      "location": "Legion Field, Shelley",
-      "time": "6:00 PM",
-      "status": "completed",
-      "description": "Open tryouts for new players (ages 12-18)"
-    },
-    {
-      "date": "January 15",
       "title": "vs Twin Falls Tigers",
       "type": "game",
       "location": "Legion Field, Shelley",
       "time": "7:00 PM",
       "status": "upcoming",
-      "description": "Home game against Twin Falls Tigers"
+      "description": "Home opener against Twin Falls Tigers"
     },
     {
-      "date": "January 22",
-      "title": "Winter Practice",
+      "date": "March 22",
+      "title": "Spring Training",
       "type": "practice",
-      "location": "Indoor Facility, Shelley",
+      "location": "Legion Field, Shelley",
       "time": "6:00 PM",
       "status": "upcoming",
-      "description": "Indoor winter practice session"
+      "description": "Spring training practice session"
     },
     {
-      "date": "February 5",
-      "title": "@ Rexburg Rangers",
+      "date": "March 29",
+      "title": "@ Idaho Falls Bandits",
       "type": "game",
-      "location": "Rexburg High School",
-      "time": "6:30 PM",
+      "location": "Bandits Stadium, Idaho Falls",
+      "time": "7:30 PM",
       "status": "upcoming",
-      "description": "Away game at Rexburg"
+      "description": "Away game against Idaho Falls Bandits"
     },
     {
-      "date": "February 12",
-      "title": "Spring Tryouts",
+      "date": "April 5",
+      "title": "Team Tryouts",
       "type": "tryout",
       "location": "Legion Field, Shelley",
-      "time": "5:00 PM",
+      "time": "10:00 AM",
       "status": "upcoming",
-      "description": "Spring season tryouts for new players (ages 12-18)"
+      "description": "Open tryouts for new players (ages 12-18)"
     }
   ]
 }

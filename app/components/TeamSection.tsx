@@ -16,26 +16,19 @@ export default function TeamSection() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const fetchRoster = async () => {
+    const loadRoster = async () => {
       try {
-        const response = await fetch('/api/admin/roster', {
-          cache: 'no-store',
-          headers: {
-            'Cache-Control': 'no-cache'
-          }
-        })
-        const data = await response.json()
-        setPlayers(data.players || [])
+        const rosterData = await import('../../data/roster.json')
+        setPlayers((rosterData.players || []) as Player[])
       } catch (error) {
-        console.error('Failed to fetch roster:', error)
-        // Fallback to empty array
+        console.error('Failed to load roster:', error)
         setPlayers([])
       } finally {
         setIsLoading(false)
       }
     }
 
-    fetchRoster()
+    loadRoster()
   }, [])
   return (
     <section id="team" className="section-padding bg-legion-gray-50 dark:bg-legion-gray-900 relative overflow-hidden">
