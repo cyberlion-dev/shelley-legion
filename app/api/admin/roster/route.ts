@@ -30,27 +30,7 @@ function verifyToken(request: NextRequest) {
 
 // GET - Read roster
 export async function GET() {
-  try {
-    // Try to fetch from Vercel Blob
-    const blobs = await list({ prefix: 'roster.json' })
-
-    if (blobs.blobs.length > 0) {
-      const response = await fetch(blobs.blobs[0].url)
-      if (response.ok) {
-        const rosterData = await response.json()
-        const result = NextResponse.json(rosterData)
-        // Prevent caching
-        result.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate')
-        result.headers.set('Pragma', 'no-cache')
-        result.headers.set('Expires', '0')
-        return result
-      }
-    }
-  } catch (error) {
-    console.log('Blob storage not available, using fallback:', error)
-  }
-
-  // Fallback to default data
+  // Fallback data first
   const defaultRoster = {
     players: [
       { number: 23, name: 'Jake Morrison', position: 'Pitcher', stats: '2.45 ERA' },
@@ -61,6 +41,30 @@ export async function GET() {
       { number: 31, name: 'Ryan Miller', position: 'Third Base', stats: '.298 AVG' }
     ]
   }
+
+  try {
+    // Only try Blob storage if token is available
+    if (process.env.BLOB_READ_WRITE_TOKEN) {
+      const blobs = await list({ prefix: 'roster.json' })
+
+      if (blobs.blobs.length > 0) {
+        const response = await fetch(blobs.blobs[0].url)
+        if (response.ok) {
+          const rosterData = await response.json()
+          const result = NextResponse.json(rosterData)
+          // Prevent caching
+          result.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate')
+          result.headers.set('Pragma', 'no-cache')
+          result.headers.set('Expires', '0')
+          return result
+        }
+      }
+    }
+  } catch (error) {
+    console.log('Blob storage error, using fallback:', error)
+  }
+
+  // Return fallback data
   const result = NextResponse.json(defaultRoster)
   // Prevent caching
   result.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate')

@@ -30,27 +30,7 @@ function verifyToken(request: NextRequest) {
 
 // GET - Read team info
 export async function GET() {
-  try {
-    // Try to fetch from Vercel Blob
-    const blobs = await list({ prefix: 'team-info.json' })
-
-    if (blobs.blobs.length > 0) {
-      const response = await fetch(blobs.blobs[0].url)
-      if (response.ok) {
-        const teamInfoData = await response.json()
-        const result = NextResponse.json(teamInfoData)
-        // Prevent caching
-        result.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate')
-        result.headers.set('Pragma', 'no-cache')
-        result.headers.set('Expires', '0')
-        return result
-      }
-    }
-  } catch (error) {
-    console.log('Blob storage not available, using fallback:', error)
-  }
-  
-  // Fallback to default data
+  // Fallback data first
   const defaultTeamInfo = {
     teamName: "Shelley Legion",
     tagline: "Honor, Pride, Victory",
@@ -66,6 +46,30 @@ export async function GET() {
       instagram: "https://instagram.com/shelleylegion"
     }
   }
+
+  try {
+    // Only try Blob storage if token is available
+    if (process.env.BLOB_READ_WRITE_TOKEN) {
+      const blobs = await list({ prefix: 'team-info.json' })
+
+      if (blobs.blobs.length > 0) {
+        const response = await fetch(blobs.blobs[0].url)
+        if (response.ok) {
+          const teamInfoData = await response.json()
+          const result = NextResponse.json(teamInfoData)
+          // Prevent caching
+          result.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate')
+          result.headers.set('Pragma', 'no-cache')
+          result.headers.set('Expires', '0')
+          return result
+        }
+      }
+    }
+  } catch (error) {
+    console.log('Blob storage error, using fallback:', error)
+  }
+
+  // Return fallback data
   const result = NextResponse.json(defaultTeamInfo)
   // Prevent caching
   result.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate')
