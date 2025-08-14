@@ -18,7 +18,12 @@ export default function TeamSection() {
   useEffect(() => {
     const fetchRoster = async () => {
       try {
-        const response = await fetch('/api/admin/roster')
+        const response = await fetch('/api/admin/roster', {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        })
         const data = await response.json()
         setPlayers(data.players || [])
       } catch (error) {

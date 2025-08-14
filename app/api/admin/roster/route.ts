@@ -37,7 +37,12 @@ export async function GET() {
       const response = await fetch(blobs.blobs[0].url)
       if (response.ok) {
         const rosterData = await response.json()
-        return NextResponse.json(rosterData)
+        const result = NextResponse.json(rosterData)
+        // Prevent caching
+        result.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate')
+        result.headers.set('Pragma', 'no-cache')
+        result.headers.set('Expires', '0')
+        return result
       }
     }
   } catch (error) {
@@ -55,7 +60,12 @@ export async function GET() {
       { number: 31, name: 'Ryan Miller', position: 'Third Base', stats: '.298 AVG' }
     ]
   }
-  return NextResponse.json(defaultRoster)
+  const result = NextResponse.json(defaultRoster)
+  // Prevent caching
+  result.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate')
+  result.headers.set('Pragma', 'no-cache')
+  result.headers.set('Expires', '0')
+  return result
 }
 
 // PUT - Update roster

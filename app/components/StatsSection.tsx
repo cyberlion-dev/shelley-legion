@@ -24,7 +24,12 @@ export default function StatsSection() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await fetch('/api/admin/stats')
+        const response = await fetch('/api/admin/stats', {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        })
         const data = await response.json()
         setTeamStats(data.teamStats || [])
       } catch (error) {

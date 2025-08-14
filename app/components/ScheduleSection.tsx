@@ -22,7 +22,12 @@ export default function ScheduleSection() {
   useEffect(() => {
     const fetchSchedule = async () => {
       try {
-        const response = await fetch('/api/admin/schedule')
+        const response = await fetch('/api/admin/schedule', {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        })
         const data = await response.json()
         setEvents(data.events || [])
       } catch (error) {

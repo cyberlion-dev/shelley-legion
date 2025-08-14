@@ -39,7 +39,12 @@ export default function Footer() {
   useEffect(() => {
     const fetchTeamInfo = async () => {
       try {
-        const response = await fetch('/api/admin/team-info')
+        const response = await fetch('/api/admin/team-info', {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        })
         const data = await response.json()
         setTeamInfo(data)
       } catch (error) {

@@ -31,18 +31,22 @@ function verifyToken(request: NextRequest) {
 export async function GET() {
   try {
     // Try to fetch from Vercel Blob
-    const response = await fetch(`${process.env.BLOB_READ_WRITE_TOKEN ? 'https://blob.vercel-storage.com' : ''}/schedule.json`, {
-      headers: process.env.BLOB_READ_WRITE_TOKEN ? {
-        'Authorization': `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}`
-      } : {}
-    })
-    
-    if (response.ok) {
-      const scheduleData = await response.json()
-      return NextResponse.json(scheduleData)
+    const blobs = await list({ prefix: 'schedule.json' })
+
+    if (blobs.blobs.length > 0) {
+      const response = await fetch(blobs.blobs[0].url)
+      if (response.ok) {
+        const scheduleData = await response.json()
+        const result = NextResponse.json(scheduleData)
+        // Prevent caching
+        result.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate')
+        result.headers.set('Pragma', 'no-cache')
+        result.headers.set('Expires', '0')
+        return result
+      }
     }
   } catch (error) {
-    console.log('Blob storage not available, using fallback')
+    console.log('Blob storage not available, using fallback:', error)
   }
   
   // Fallback to default data
