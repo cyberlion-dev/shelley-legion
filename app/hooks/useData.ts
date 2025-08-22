@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export function useData<T>(filename: string, initialData: T) {
-  const [data, setData] = useState<T>(initialData)
+  const initialRef = useRef(initialData)
+  const [data, setData] = useState<T>(initialRef.current)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
 
@@ -22,7 +23,7 @@ export function useData<T>(filename: string, initialData: T) {
       } catch (err) {
         if (active) {
           setError(err as Error)
-          setData(initialData)
+          setData(initialRef.current)
         }
       } finally {
         if (active) {
@@ -35,7 +36,7 @@ export function useData<T>(filename: string, initialData: T) {
     return () => {
       active = false
     }
-  }, [filename, initialData])
+  }, [filename])
 
   return { data, isLoading, error }
 }
