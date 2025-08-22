@@ -3,12 +3,27 @@
 import { useState, useEffect } from 'react'
 import { Menu, X } from 'lucide-react'
 import Image from 'next/image'
-import brandingData from '../../data/branding.json'
 
+interface BrandingData {
+  logo: {
+    src: string;
+    alt: string;
+    width: number;
+    height: number;
+  };
+}
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [brandingData, setBrandingData] = useState<BrandingData>({
+    logo: {
+      src: "/images/shelley-legion-logo.png",
+      alt: "Shelley Legion Baseball Logo",
+      width: 60,
+      height: 60
+    }
+  })
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,6 +31,22 @@ export default function Navbar() {
     }
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  useEffect(() => {
+    const loadBranding = async () => {
+      try {
+        const response = await fetch('/api/data/branding.json')
+        if (response.ok) {
+          const data = await response.json()
+          setBrandingData(data)
+        }
+      } catch (error) {
+        // Keep default data
+      }
+    }
+
+    loadBranding()
   }, [])
 
   const navItems = [

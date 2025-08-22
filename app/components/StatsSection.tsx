@@ -24,10 +24,14 @@ export default function StatsSection() {
   useEffect(() => {
     const loadStats = async () => {
       try {
-        const statsData = await import('../../data/stats.json')
-        setTeamStats((statsData.teamStats || []) as TeamStat[])
+        const response = await fetch('/api/data/stats.json')
+        if (response.ok) {
+          const statsData = await response.json()
+          setTeamStats((statsData.teamStats || []) as TeamStat[])
+        } else {
+          setTeamStats([])
+        }
       } catch (error) {
-        console.error('Failed to load stats:', error)
         setTeamStats([])
       } finally {
         setIsLoading(false)

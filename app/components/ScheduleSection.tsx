@@ -22,10 +22,14 @@ export default function ScheduleSection() {
   useEffect(() => {
     const loadSchedule = async () => {
       try {
-        const scheduleData = await import('../../data/schedule.json')
-        setEvents((scheduleData.events || []) as Event[])
+        const response = await fetch('/api/data/schedule.json')
+        if (response.ok) {
+          const scheduleData = await response.json()
+          setEvents((scheduleData.events || []) as Event[])
+        } else {
+          setEvents([])
+        }
       } catch (error) {
-        console.error('Failed to load schedule:', error)
         setEvents([])
       } finally {
         setIsLoading(false)
