@@ -1,7 +1,7 @@
 'use client'
 
 import { Trophy, Target, TrendingUp, Award } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useData } from '../hooks/useData'
 
 const iconMap = {
   trophy: Trophy,
@@ -17,29 +17,14 @@ interface TeamStat {
   icon: string
 }
 
+interface StatsData {
+  teamStats: TeamStat[]
+}
+
 export default function StatsSection() {
-  const [teamStats, setTeamStats] = useState<TeamStat[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const { data, isLoading } = useData<StatsData>('stats.json', { teamStats: [] })
+  const teamStats = data.teamStats
 
-  useEffect(() => {
-    const loadStats = async () => {
-      try {
-        const response = await fetch('/api/data/stats.json')
-        if (response.ok) {
-          const statsData = await response.json()
-          setTeamStats((statsData.teamStats || []) as TeamStat[])
-        } else {
-          setTeamStats([])
-        }
-      } catch (error) {
-        setTeamStats([])
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    loadStats()
-  }, [])
   return (
     <section id="stats" className="section-padding bg-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -58,20 +43,20 @@ export default function StatsSection() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {teamStats.map((stat, index) => {
-            const IconComponent = iconMap[stat.icon as keyof typeof iconMap]
-            return (
-              <div
-                key={index}
-                className="text-center p-6 rounded-xl bg-white/10 backdrop-blur-sm card-hover"
-              >
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-full mb-4">
-                  <IconComponent className="w-8 h-8 text-legion-red-600" />
+              const IconComponent = iconMap[stat.icon as keyof typeof iconMap]
+              return (
+                <div
+                  key={index}
+                  className="text-center p-6 rounded-xl bg-white/10 backdrop-blur-sm card-hover"
+                >
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-full mb-4">
+                    <IconComponent className="w-8 h-8 text-legion-red-600" />
+                  </div>
+                  <div className="text-4xl font-bold text-white mb-2">{stat.value}</div>
+                  <div className="text-lg font-semibold text-legion-red-400 mb-1">{stat.label}</div>
+                  <div className="text-legion-gray-300 text-sm">{stat.description}</div>
                 </div>
-                <div className="text-4xl font-bold text-white mb-2">{stat.value}</div>
-                <div className="text-lg font-semibold text-legion-red-400 mb-1">{stat.label}</div>
-                <div className="text-legion-gray-300 text-sm">{stat.description}</div>
-              </div>
-            )
+              )
             })}
           </div>
         )}

@@ -3,27 +3,29 @@
 import { useState, useEffect } from 'react'
 import { Menu, X } from 'lucide-react'
 import Image from 'next/image'
+import { useData } from '../hooks/useData'
 
 interface BrandingData {
   logo: {
-    src: string;
-    alt: string;
-    width: number;
-    height: number;
-  };
+    src: string
+    alt: string
+    width: number
+    height: number
+  }
 }
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [brandingData, setBrandingData] = useState<BrandingData>({
+  const defaultBranding: BrandingData = {
     logo: {
-      src: "/images/shelley-legion-logo.png",
-      alt: "Shelley Legion Baseball Logo",
+      src: '/images/shelley-legion-logo.png',
+      alt: 'Shelley Legion Baseball Logo',
       width: 60,
       height: 60
     }
-  })
+  }
+  const { data: brandingData } = useData<BrandingData>('branding.json', defaultBranding)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,22 +33,6 @@ export default function Navbar() {
     }
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  useEffect(() => {
-    const loadBranding = async () => {
-      try {
-        const response = await fetch('/api/data/branding.json')
-        if (response.ok) {
-          const data = await response.json()
-          setBrandingData(data)
-        }
-      } catch (error) {
-        // Keep default data
-      }
-    }
-
-    loadBranding()
   }, [])
 
   const navItems = [
@@ -58,8 +44,7 @@ export default function Navbar() {
   ]
 
   return (
-    <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-black/95 backdrop-blur-md shadow-lg' : 'bg-transparent'
-      }`}>
+    <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-black/95 backdrop-blur-md shadow-lg' : 'bg-transparent'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-3">

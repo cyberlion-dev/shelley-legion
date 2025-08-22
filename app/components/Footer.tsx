@@ -1,7 +1,7 @@
 'use client'
 
 import { Mail, Phone, MapPin, Facebook, Twitter, Instagram } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useData } from '../hooks/useData'
 
 interface TeamInfo {
   teamName: string
@@ -20,7 +20,7 @@ interface TeamInfo {
 }
 
 export default function Footer() {
-  const [teamInfo, setTeamInfo] = useState<TeamInfo>({
+  const defaultInfo: TeamInfo = {
     teamName: 'Shelley Legion',
     tagline: 'Honor, Pride, Victory',
     description: 'Youth baseball team for players 18 and under',
@@ -34,23 +34,10 @@ export default function Footer() {
       twitter: 'https://twitter.com/shelleylegion',
       instagram: 'https://instagram.com/shelleylegion'
     }
-  })
+  }
 
-  useEffect(() => {
-    const loadTeamInfo = async () => {
-      try {
-        const response = await fetch('/api/data/team-info.json')
-        if (response.ok) {
-          const teamInfoData = await response.json()
-          setTeamInfo(teamInfoData as TeamInfo)
-        }
-      } catch (error) {
-        // Keep the default data that was already set
-      }
-    }
+  const { data: teamInfo } = useData<TeamInfo>('team-info.json', defaultInfo)
 
-    loadTeamInfo()
-  }, [])
   return (
     <footer className="bg-legion-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
