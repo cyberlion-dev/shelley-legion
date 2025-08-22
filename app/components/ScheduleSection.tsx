@@ -1,9 +1,9 @@
 'use client'
 
 import { Calendar, MapPin, Clock, Plus } from 'lucide-react'
-import React, { useState, useEffect } from 'react'
 import BaseballBackground from './BaseballBackground'
 import { getEventStatus, formatEventStatus } from '../utils/dateUtils'
+import { useData } from '../hooks/useData'
 
 interface Event {
   date: string
@@ -15,29 +15,13 @@ interface Event {
   description: string
 }
 
+interface ScheduleData {
+  events: Event[]
+}
+
 export default function ScheduleSection() {
-  const [events, setEvents] = useState<Event[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    const loadSchedule = async () => {
-      try {
-        const response = await fetch('/api/data/schedule.json')
-        if (response.ok) {
-          const scheduleData = await response.json()
-          setEvents((scheduleData.events || []) as Event[])
-        } else {
-          setEvents([])
-        }
-      } catch (error) {
-        setEvents([])
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    loadSchedule()
-  }, [])
+  const { data, isLoading } = useData<ScheduleData>('schedule.json', { events: [] })
+  const events = data.events
 
   const getEventIcon = (type: string) => {
     switch (type) {
@@ -67,14 +51,14 @@ export default function ScheduleSection() {
 
   const addToCalendar = (event: any) => {
     const startDate = new Date(`${event.date} 2025 ${event.time}`)
-    const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000) // 2 hours later
-    
+    const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000)
+
     const formatDate = (date: Date) => {
       return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
     }
 
     const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${formatDate(startDate)}/${formatDate(endDate)}&details=${encodeURIComponent(event.description)}&location=${encodeURIComponent(event.location)}`
-    
+
     window.open(calendarUrl, '_blank')
   }
 
@@ -100,57 +84,57 @@ export default function ScheduleSection() {
         ) : (
           <div className="max-w-4xl mx-auto space-y-4">
             {events.map((event, index) => {
-            const currentStatus = getEventStatus(event.date, event.status)
-            const statusDisplay = formatEventStatus(currentStatus)
-            
-            return (
-              <div
-                key={index}
-                className="bg-gradient-to-r from-legion-red-50 to-white dark:from-legion-gray-800 dark:to-legion-gray-700 rounded-xl shadow-md p-6 card-hover border-l-4 border-legion-red-600"
-              >
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                  <div className="flex items-center space-x-6 mb-4 md:mb-0">
-                    <div className={`${getEventColor(event.type)} text-white rounded-lg p-3 text-center min-w-[80px] flex flex-col items-center`}>
-                      <span className="text-2xl mb-1">{getEventIcon(event.type)}</span>
-                      <div className="font-bold text-xs">{event.date}</div>
-                    </div>
-                    <div>
-                      <div className="flex items-center space-x-3 mb-1">
-                        <h3 className="text-xl font-bold text-legion-gray-900 dark:text-white">
-                          {event.title}
-                        </h3>
-                        <span className={`text-sm font-semibold px-2 py-1 rounded-full ${statusDisplay.color} bg-opacity-10`}>
-                          {statusDisplay.text}
-                        </span>
+              const currentStatus = getEventStatus(event.date, event.status)
+              const statusDisplay = formatEventStatus(currentStatus)
+
+              return (
+                <div
+                  key={index}
+                  className="bg-gradient-to-r from-legion-red-50 to-white dark:from-legion-gray-800 dark:to-legion-gray-700 rounded-xl shadow-md p-6 card-hover border-l-4 border-legion-red-600"
+                >
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                    <div className="flex items-center space-x-6 mb-4 md:mb-0">
+                      <div className={`${getEventColor(event.type)} text-white rounded-lg p-3 text-center min-w-[80px] flex flex-col items-center`}>
+                        <span className="text-2xl mb-1">{getEventIcon(event.type)}</span>
+                        <div className="font-bold text-xs">{event.date}</div>
                       </div>
-                      <div className="flex items-center space-x-4 text-legion-gray-600 dark:text-legion-gray-300 mb-2">
-                        <div className="flex items-center">
-                          <MapPin className="w-4 h-4 mr-1" />
-                          <span className="font-medium">{event.location}</span>
+                      <div>
+                        <div className="flex items-center space-x-3 mb-1">
+                          <h3 className="text-xl font-bold text-legion-gray-900 dark:text-white">
+                            {event.title}
+                          </h3>
+                          <span className={`text-sm font-semibold px-2 py-1 rounded-full ${statusDisplay.color} bg-opacity-10`}>
+                            {statusDisplay.text}
+                          </span>
                         </div>
-                        <div className="flex items-center">
-                          <Clock className="w-4 h-4 mr-1" />
-                          <span>{event.time}</span>
+                        <div className="flex items-center space-x-4 text-legion-gray-600 dark:text-legion-gray-300 mb-2">
+                          <div className="flex items-center">
+                            <MapPin className="w-4 h-4 mr-1" />
+                            <span className="font-medium">{event.location}</span>
+                          </div>
+                          <div className="flex items-center">
+                            <Clock className="w-4 h-4 mr-1" />
+                            <span>{event.time}</span>
+                          </div>
                         </div>
+                        <p className="text-sm text-legion-gray-600 dark:text-legion-gray-300">
+                          {event.description}
+                        </p>
                       </div>
-                      <p className="text-sm text-legion-gray-600 dark:text-legion-gray-300">
-                        {event.description}
-                      </p>
                     </div>
-                  </div>
-                  <div className="flex space-x-3">
-                    {currentStatus !== 'completed' && currentStatus !== 'cancelled' && (
-                      <button
-                        onClick={() => addToCalendar(event)}
-                        className="bg-legion-red-600 hover:bg-legion-red-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors duration-200 flex items-center space-x-2"
-                      >
-                        <Plus className="w-4 h-4" />
-                        <span>Add to Calendar</span>
-                      </button>
-                    )}
+                    <div className="flex space-x-3">
+                      {currentStatus !== 'completed' && currentStatus !== 'cancelled' && (
+                        <button
+                          onClick={() => addToCalendar(event)}
+                          className="bg-legion-red-600 hover:bg-legion-red-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors duration-200 flex items-center space-x-2"
+                        >
+                          <Plus className="w-4 h-4" />
+                          <span>Add to Calendar</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
               )
             })}
           </div>

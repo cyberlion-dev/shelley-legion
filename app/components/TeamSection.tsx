@@ -1,8 +1,8 @@
 'use client'
 
 import { Users } from 'lucide-react'
-import { useState, useEffect } from 'react'
 import BaseballBackground from './BaseballBackground'
+import { useData } from '../hooks/useData'
 
 interface Player {
   number: number
@@ -11,34 +11,13 @@ interface Player {
   stats: string
 }
 
+interface RosterData {
+  players: Player[]
+}
+
 export default function TeamSection() {
-  const [players, setPlayers] = useState<Player[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-
-  const loadRoster = async () => {
-    try {
-      const response = await fetch(`/api/data/roster.json?t=${Date.now()}`, {
-        cache: 'no-store'
-      })
-
-      if (response.ok) {
-        const rosterData = await response.json()
-        setPlayers((rosterData.players || []) as Player[])
-      } else {
-        setPlayers([])
-      }
-    } catch (error) {
-      setPlayers([])
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    loadRoster()
-  }, [])
-
-
+  const { data, isLoading, error } = useData<RosterData>('roster.json', { players: [] })
+  const players = data.players
 
   return (
     <section id="team" className="section-padding bg-legion-gray-50 dark:bg-legion-gray-900 relative overflow-hidden">
@@ -52,7 +31,6 @@ export default function TeamSection() {
           <p className="text-xl text-legion-gray-600 dark:text-legion-gray-300 max-w-2xl mx-auto">
             Our talented young athletes ready to dominate the diamond
           </p>
-
         </div>
 
         {isLoading ? (
@@ -60,7 +38,7 @@ export default function TeamSection() {
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-legion-red-600 mx-auto"></div>
             <p className="mt-4 text-legion-gray-600 dark:text-legion-gray-300">Loading team roster...</p>
           </div>
-        ) : (
+        ) : players.length ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {players.map((player) => (
               <div
@@ -86,6 +64,12 @@ export default function TeamSection() {
                 </div>
               </div>
             ))}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-legion-gray-600 dark:text-legion-gray-300">
+              {error ? 'Failed to load team roster.' : 'No players found.'}
+            </p>
           </div>
         )}
       </div>
