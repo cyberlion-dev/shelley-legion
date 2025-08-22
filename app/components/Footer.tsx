@@ -39,10 +39,12 @@ export default function Footer() {
   useEffect(() => {
     const loadTeamInfo = async () => {
       try {
-        const teamInfoData = await import('../../data/team-info.json')
-        setTeamInfo((teamInfoData.default || teamInfoData) as TeamInfo)
+        const response = await fetch('/api/data/team-info.json')
+        if (response.ok) {
+          const teamInfoData = await response.json()
+          setTeamInfo(teamInfoData as TeamInfo)
+        }
       } catch (error) {
-        console.error('Failed to load team info:', error)
         // Keep the default data that was already set
       }
     }
