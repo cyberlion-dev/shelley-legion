@@ -1,16 +1,15 @@
-'use client'
-
 import { Mail, Phone, MapPin, Facebook, Twitter, Instagram } from 'lucide-react'
-import { useData } from '../hooks/useData'
+import teamInfoData from '../../data/team-info.json'
 
 interface TeamInfo {
   teamName: string
-  tagline: string
-  description: string
+  location: string
+  founded: string
+  league: string
+  homeField: string
   contact: {
     phone: string
     email: string
-    address: string
   }
   socialMedia: {
     facebook: string
@@ -20,24 +19,7 @@ interface TeamInfo {
 }
 
 export default function Footer() {
-  const defaultInfo: TeamInfo = {
-    teamName: 'Shelley Legion',
-    tagline: 'Honor, Pride, Victory',
-    description: 'Youth baseball team for players 18 and under',
-    contact: {
-      phone: '(208) 555-LEGION',
-      email: 'info@shelleylegion.com',
-      address: 'Legion Field, Shelley, ID'
-    },
-    socialMedia: {
-      facebook: 'https://facebook.com/shelleylegion',
-      twitter: 'https://twitter.com/shelleylegion',
-      instagram: 'https://instagram.com/shelleylegion'
-    }
-  }
-
-  const { data: teamInfo } = useData<TeamInfo>('team-info.json', defaultInfo)
-
+  const teamInfo = teamInfoData as TeamInfo
   return (
     <footer className="bg-legion-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -46,12 +28,18 @@ export default function Footer() {
           <div>
             <h3 className="text-2xl font-bold mb-4">⚾ {teamInfo.teamName}</h3>
             <p className="text-legion-gray-300 mb-4">
-              {teamInfo.description}
+              {teamInfo.league} - Founded {teamInfo.founded}
             </p>
             <div className="flex space-x-4">
-              <Facebook className="w-6 h-6 text-legion-gray-400 hover:text-white cursor-pointer transition-colors" />
-              <Twitter className="w-6 h-6 text-legion-gray-400 hover:text-white cursor-pointer transition-colors" />
-              <Instagram className="w-6 h-6 text-legion-gray-400 hover:text-white cursor-pointer transition-colors" />
+              <a href={teamInfo.socialMedia.facebook} target="_blank" rel="noopener noreferrer">
+                <Facebook className="w-6 h-6 text-legion-gray-400 hover:text-white cursor-pointer transition-colors" />
+              </a>
+              <a href={teamInfo.socialMedia.twitter} target="_blank" rel="noopener noreferrer">
+                <Twitter className="w-6 h-6 text-legion-gray-400 hover:text-white cursor-pointer transition-colors" />
+              </a>
+              <a href={teamInfo.socialMedia.instagram} target="_blank" rel="noopener noreferrer">
+                <Instagram className="w-6 h-6 text-legion-gray-400 hover:text-white cursor-pointer transition-colors" />
+              </a>
             </div>
           </div>
 
@@ -69,7 +57,7 @@ export default function Footer() {
               </div>
               <div className="flex items-center">
                 <MapPin className="w-5 h-5 text-legion-red-400 mr-3" />
-                <span className="text-legion-gray-300">{teamInfo.contact.address}</span>
+                <span className="text-legion-gray-300">{teamInfo.homeField}, {teamInfo.location}</span>
               </div>
             </div>
           </div>

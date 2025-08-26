@@ -1,0 +1,40 @@
+{
+  "events": [
+    {
+      "date": "March 15",
+      "title": "Spring Training Tryouts",
+      "type": "tryout",
+      "location": "Shelley High School Field",
+      "time": "10:00 AM",
+      "status": "upcoming",
+      "description": "Open tryouts for the 2025 season. Bring your glove and cleats!"
+    },
+    {
+      "date": "March 22",
+      "title": "vs Thunder Bay Tigers",
+      "type": "game",
+      "location": "Legion Field",
+      "time": "2:00 PM",
+      "status": "upcoming",
+      "description": "Season opener against the Tigers. Come support the Legion!"
+    },
+    {
+      "date": "March 29",
+      "title": "Team Practice",
+      "type": "practice",
+      "location": "Shelley High School Field",
+      "time": "4:00 PM",
+      "status": "upcoming",
+      "description": "Regular team practice session focusing on batting and fielding."
+    },
+    {
+      "date": "April 5",
+      "title": "vs Blackfoot Broncos",
+      "type": "game",
+      "location": "Blackfoot Stadium",
+      "time": "1:00 PM",
+      "status": "upcoming",
+      "description": "Away game against the Broncos. Travel arrangements will be announced."
+    }
+  ]
+}

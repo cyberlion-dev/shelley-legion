@@ -3,29 +3,11 @@
 import { useState, useEffect } from 'react'
 import { Menu, X } from 'lucide-react'
 import Image from 'next/image'
-import { useData } from '../hooks/useData'
-
-interface BrandingData {
-  logo: {
-    src: string
-    alt: string
-    width: number
-    height: number
-  }
-}
+import brandingData from '../../data/branding.json'
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const defaultBranding: BrandingData = {
-    logo: {
-      src: '/images/shelley-legion-logo.png',
-      alt: 'Shelley Legion Baseball Logo',
-      width: 60,
-      height: 60
-    }
-  }
-  const { data: brandingData } = useData<BrandingData>('branding.json', defaultBranding)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -49,13 +31,13 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-3">
             <Image
-              src={brandingData.logo.src}
-              alt={brandingData.logo.alt}
-              width={brandingData.logo.width}
-              height={brandingData.logo.height}
+              src="/images/shelley-legion-logo.png"
+              alt="Shelley Legion Baseball Logo"
+              width={60}
+              height={60}
               className="rounded-full"
             />
-            <span className="text-2xl font-bold text-white">Shelley Legion</span>
+            <span className="text-2xl font-bold text-white">{brandingData.teamName}</span>
           </div>
 
           {/* Desktop Menu */}
