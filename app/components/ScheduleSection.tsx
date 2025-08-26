@@ -14,6 +14,10 @@ interface Event {
   description: string
 }
 
+interface ScheduleData {
+  events: Event[]
+}
+
 export default function ScheduleSection() {
   const events = scheduleData.events as Event[]
 
@@ -45,14 +49,14 @@ export default function ScheduleSection() {
 
   const addToCalendar = (event: any) => {
     const startDate = new Date(`${event.date} 2025 ${event.time}`)
-    const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000) // 2 hours later
-    
+    const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000)
+
     const formatDate = (date: Date) => {
       return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
     }
 
     const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${formatDate(startDate)}/${formatDate(endDate)}&details=${encodeURIComponent(event.description)}&location=${encodeURIComponent(event.location)}`
-    
+
     window.open(calendarUrl, '_blank')
   }
 

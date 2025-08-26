@@ -15,6 +15,10 @@ interface TeamStat {
   icon: string
 }
 
+interface StatsData {
+  teamStats: TeamStat[]
+}
+
 export default function StatsSection() {
   const teamStats = statsData.teamStats as TeamStat[]
   return (

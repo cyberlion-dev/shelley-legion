@@ -9,6 +9,10 @@ interface Player {
   stats: string
 }
 
+interface RosterData {
+  players: Player[]
+}
+
 export default function TeamSection() {
   const players = rosterData.players as Player[]
 
