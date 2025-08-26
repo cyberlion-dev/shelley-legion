@@ -1,0 +1,28 @@
+{
+  "teamStats": [
+    {
+      "label": "Wins",
+      "value": "18",
+      "description": "Games won this season",
+      "icon": "trophy"
+    },
+    {
+      "label": "Team ERA",
+      "value": "3.25",
+      "description": "Earned run average",
+      "icon": "target"
+    },
+    {
+      "label": "Batting AVG",
+      "value": ".285",
+      "description": "Team batting average",
+      "icon": "trending-up"
+    },
+    {
+      "label": "Championships",
+      "value": "2",
+      "description": "League titles won",
+      "icon": "award"
+    }
+  ]
+}

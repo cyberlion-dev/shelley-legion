@@ -1,0 +1,16 @@
+{
+  "teamName": "Shelley Legion Baseball",
+  "location": "Shelley, Idaho",
+  "founded": "1985",
+  "league": "American Legion Baseball",
+  "homeField": "Legion Field",
+  "contact": {
+    "email": "info@shelleylegion.com",
+    "phone": "(208) 555-0123"
+  },
+  "socialMedia": {
+    "facebook": "https://facebook.com/shelleylegion",
+    "twitter": "https://twitter.com/shelleylegion",
+    "instagram": "https://instagram.com/shelleylegion"
+  }
+}

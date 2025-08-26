@@ -1,0 +1,40 @@
+{
+  "players": [
+    {
+      "number": 1,
+      "name": "Jake Thompson",
+      "position": "Pitcher",
+      "stats": "2.45 ERA, 45 K's"
+    },
+    {
+      "number": 7,
+      "name": "Mike Rodriguez",
+      "position": "Catcher",
+      "stats": ".285 AVG, 12 RBI"
+    },
+    {
+      "number": 12,
+      "name": "Alex Johnson",
+      "position": "First Base",
+      "stats": ".310 AVG, 18 RBI"
+    },
+    {
+      "number": 23,
+      "name": "Chris Davis",
+      "position": "Shortstop",
+      "stats": ".275 AVG, 8 SB"
+    },
+    {
+      "number": 15,
+      "name": "Ryan Wilson",
+      "position": "Outfield",
+      "stats": ".295 AVG, 15 RBI"
+    },
+    {
+      "number": 8,
+      "name": "Tyler Brown",
+      "position": "Second Base",
+      "stats": ".260 AVG, 6 SB"
+    }
+  ]
+}
